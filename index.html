@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AGE CALCULATOR</h1>
+        <div class="input-section">
+            <input type="text" id="dobInput" placeholder="MM/DD/YYYY">
+            <button id="calculateBtn">Calculator</button>
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="result-section">
+            <div class="result-box">
+                <span id="years">00</span>
+                <p>YEAR</p>
+            </div>
+            <div class="result-box">
+                <span id="months">00</span>
+                <p>MONTH</p>
+            </div>
+            <div class="result-box">
+                <span id="days">00</span>
+                <p>DAY</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<style>
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fff; 
+    color: white;
+}
+
+.container {
+    background-color: #6A1AAB;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.input-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+#dobInput {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    width: 60%;
+    max-width: 200px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#calculateBtn {
+    padding: 12px 25px;
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#calculateBtn:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: #FFD700; 
+    margin-top: 10px;
+    font-size: 1em;
+    height: 20px; 
+}
+
+.result-section {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+    gap: 20px;
+}
+
+.result-box {
+    background-color: #9370DB; 
+    padding: 25px 15px;
+    border-radius: 10px;
+    min-width: 90px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.result-box span {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.result-box p {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2em;
+    }
+    .input-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #dobInput {
+        width: 80%;
+    }
+    .result-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .result-box {
+        width: 70%;
+        max-width: 200px;
+    }
+}
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const dobInput = document.getElementById('dobInput');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const yearsSpan = document.getElementById('years');
+    const monthsSpan = document.getElementById('months');
+    const daysSpan = document.getElementById('days');
+    const errorMessage = document.getElementById('errorMessage');
+    calculateBtn.addEventListener('click', calculateAge);
+    dobInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            calculateAge();
+        }
+    });
+
+    function calculateAge() {
+        errorMessage.textContent = ''; 
+        yearsSpan.textContent = '00';
+        monthsSpan.textContent = '00';
+        daysSpan.textContent = '00';
+
+        const dobString = dobInput.value;
+
+        if (!dobString) {
+            errorMessage.textContent = 'Please enter your date of birth.';
+            return;
+        }
+
+        const parts = dobString.split('/');
+        if (parts.length !== 3) {
+            errorMessage.textContent = 'Invalid date format. Use MM/DD/YYYY.';
+            return;
+        }
+
+        const month = parseInt(parts[0], 10);
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+
+        if (isNaN(month) || isNaN(day) || isNaN(year) || month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > new Date().getFullYear()) {
+            errorMessage.textContent = 'Invalid date. Please check the MM/DD/YYYY format and valid ranges.';
+            return;
+        }
+
+        const dob = new Date(year, month - 1, day); 
+        if (dob.getMonth() !== month - 1 || dob.getDate() !== day || dob.getFullYear() !== year) {
+            errorMessage.textContent = 'Invalid date. The date does not exist (e.g., Feb 30).';
+            return;
+        }
+
+        const currentDate = new Date();
+        if (dob > currentDate) {
+            errorMessage.textContent = 'Date of birth cannot be in the future.';
+            return;
+        }
+
+        let ageYears = currentDate.getFullYear() - dob.getFullYear();
+        let ageMonths = currentDate.getMonth() - dob.getMonth();
+        let ageDays = currentDate.getDate() - dob.getDate();
+
+        if (ageDays < 0) {
+            ageMonths--;
+            const daysInLastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+            ageDays += daysInLastMonth;
+        }
+
+        if (ageMonths < 0) {
+            ageYears--;
+            ageMonths += 12;
+        }
+
+        yearsSpan.textContent = String(ageYears).padStart(2, '0');
+        monthsSpan.textContent = String(ageMonths).padStart(2, '0');
+        daysSpan.textContent = String(ageDays).padStart(2, '0');
+    }
+});
+</script>
